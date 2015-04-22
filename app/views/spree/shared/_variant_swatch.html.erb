@@ -1,1 +1,9 @@
-<div><%= product.swatch %></div>
+<div class="swatch-container">
+  <% product.option_types.each do |option_type| %>
+    <% option_type.option_values.each do |option_value| %>
+      <% if option_value.swatch && !option_value.swatch.blank? %>
+        <%= link_to '#', (product_path(product) + "?option_type=#{option_type.id}&option_value=#{option_value.id}"), style: "background-color: #{option_value.swatch}", class: "swatch" %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>
