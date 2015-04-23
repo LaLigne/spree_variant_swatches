@@ -47,5 +47,34 @@ RSpec.describe Spree::OptionValue, type: :model do
         expect(option_value.valid?).to eql(false)
       end
     end
+
+    it "allows valid URLs" do
+      option_value = build(:option_value)
+
+      valid_urls = [
+        'http://i713.photobucket.com/albums/ww131/brent_02/red-plaid-bg.jpg',
+        'https://ateachingmoment.files.wordpress.com/2011/03/plaid2.jpg'
+      ]
+
+      valid_urls.each do |color|
+        option_value.swatch = color
+        expect(option_value.valid?).to eql(true)
+      end
+    end
+
+    it "does not allow invalid URLs" do
+      option_value = build(:option_value)
+
+      invalid_urls = [
+        'i713.photobucket.com/albums/ww131/brent_02/red-plaid-bg.jpg',
+        'plaid.jpg',
+        'www.plaid.com/plaid.jpg'
+      ]
+
+      invalid_urls.each do |color|
+        option_value.swatch = color
+        expect(option_value.valid?).to eql(false)
+      end
+    end
   end
 end
