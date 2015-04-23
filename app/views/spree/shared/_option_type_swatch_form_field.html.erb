@@ -1,6 +1,22 @@
 <td class="swatch-field">
   <% value = f.object.swatch %>
-  <%= check_box_tag 'use_swatch', 'yes', value && !value.blank?, class: 'enable-swatch-toggle', "data-picker" => ".js-picker-#{f.object.id}" %>
+  <% Hash['none', 'None', 'color', 'Color', 'file', 'URL'].each do |swatch_type, swatch_presentation| %>
+    <% checked = case swatch_type
+      when 'none'
+        (value.nil? || value.blank?)
+      when 'color'
+        /\A#([0-9a-f]{3}|[0-9a-f]{6})\z/i.match(value)
+      when 'file'
+        /\Ahttp(s)?:\/\/.+\z/i.match(value)
+      else
+        false
+      end
+    %>
+    <%= radio_button_tag "swatch-#{f.object.id}-type", swatch_type, checked, id: "swatch-#{f.object.id}-#{swatch_type}", class: 'enable-swatch-toggle', "data-fields" => ".js-swatch-field-#{f.object.id}" %>
+    <label for="<%= "swatch-#{f.object.id}-#{swatch_type}" %>"><%= swatch_presentation %></label>
+  <% end %>
+  <br>
   <%= f.hidden_field :swatch, value: nil %>
-  <%= f.color_field :swatch, class: "swatch-picker js-picker-#{f.object.id}" %>
+  <%= f.color_field :swatch, class: "swatch-picker swatch-field js-swatch-field-#{f.object.id}" %>
+  <%= f.text_field :swatch, class: "swatch-field--url swatch-field js-swatch-field-#{f.object.id}" %>
 </td>
