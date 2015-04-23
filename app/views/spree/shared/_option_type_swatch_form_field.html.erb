@@ -1,6 +1,6 @@
 <td class="swatch-field">
   <% value = f.object.swatch %>
-  <%= check_box_tag 'use_swatch', 'yes', value && !value.blank?, class: 'enable-swatch-toggle' %>
+  <%= check_box_tag 'use_swatch', 'yes', value && !value.blank?, class: 'enable-swatch-toggle', "data-picker" => ".js-picker-#{f.object.id}" %>
   <%= f.hidden_field :swatch, value: nil %>
-  <%= f.color_field :swatch, class: 'swatch-picker' %>
+  <%= f.color_field :swatch, class: "swatch-picker js-picker-#{f.object.id}" %>
 </td>
