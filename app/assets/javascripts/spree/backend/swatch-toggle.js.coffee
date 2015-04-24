@@ -1,87 +1,103 @@
 $(document).ready(()->
-  textField = $('.swatch-field--url').each((i, e)->
-    $uploader = $('<input type="file" data-text-field="' + e.id  + '" class="' + $(e).attr('class') + '">').change((ev)->
-      file = ev.currentTarget.files[0]
 
-      urlAPI = if (typeof URL != "undefined") then URL else (if (typeof webkitURL != "undefined") then webkitURL else null)
+  Uploader = (selector)->
+    if typeof(selector) == 'string'
+      return new Uploader($(selector))
 
-      # Handle one upload at a time
-      if /image/.test(file.type)
-        onFileUpload(urlAPI.createObjectURL(file));
+    if 1 < selector.length
+      return selector.each((i, e)->
+        new Uploader($(e))
+      )
 
-        upload($(this), file, (data)->
-            console.log('success!', data)
-            if data && data.file && data.file.url
-              $('#' + this.data().textField).val(data.file.url)
-          , ()->
-            console.log('error!', arguments)
-        );
-    ).hide();
+    this.config = {
+      uploadUrl: '/admin/attachments'
+    }
 
-    $preview = $('<img class="swatch-field--preview">').hide()
-    $uploadNew = $('<input type="button" value="Remove">').click(()->
-      # $(this).parent().remove();
-    )
-    $preview.after($uploadNew)
+    this.obj = selector
+    this.value = null
+    this.uploader = $('<input type="file">')
+    this.uploaderContainer = $('<label class="file-uploader"><div class="file-uploader--container">Upload File</div></label>').append(this.uploader)
+    this.image = $('<img class="no-image">')
+    this.removeButton = $('<button class="preview--remove">remove</button>')
+    this.previewContainer = $('<div class="preview-container is-empty">')
+      .append(this.image).append(this.removeButton)
 
-    urlValue = $(e).val();
-    if urlValue == ''
-      $uploader.show()
-    else
-      $preview.attr('src', urlValue).show();
 
-    $(e).attr('type', 'hidden').after($uploader).after($preview)
-  )
+    this.doUpload = (context, file, success, error)->
+      # this just returns a random image
+      # window.setTimeout(()->
+      #   success.apply(context, [{ file: { url: 'http://api.adorable.io/avatars/30/' + (new Date).getTime() + '.png' }}])
+      # , 1000)
+      uid  = [(new Date()).getTime(), 'raw'].join('-')
+      data = new FormData()
 
-  $('.enable-swatch-toggle').change(()->
-    self = $(this)
+      data.append('attachment[name]', file.name)
+      data.append('attachment[file]', file)
+      data.append('attachment[uid]', uid)
 
-    fields = $(self.data().fields)
-    if this.checked
-      if this.value == 'none'
-        fields.attr('disabled', '')
+      callbackSuccess = (data)->
+        if typeof(success) == 'function'
+          success.apply(context, arguments);
+
+      callbackError = (jqXHR, status, errorThrown)->
+        if typeof(error) == 'function'
+          error.call(context, status)
+
+      xhr = $.ajax({
+        url: this.config.uploadUrl
+        data: data
+        cache: false
+        contentType: false
+        processData: false
+        dataType: 'json'
+        type: 'POST'
+      })
+
+      xhr.done(callbackSuccess).fail(callbackError)
+
+
+    this.setValue = (val)->
+      this.value = val
+      this.obj.val(val)
+      this.image.attr('src', val)
+      if val != ''
+        this.uploaderContainer.hide()
+        this.previewContainer.removeClass('is-empty')
       else
-        fields.attr('disabled', '').filter('[type="' + this.value + '"]').removeAttr('disabled')
-  ).change()
+        this.uploaderContainer.show()
+        this.previewContainer.addClass('is-empty')
 
-  onFileUpload = (url)->
-    $('body').append($('<img>', { src: url }))
+    this.clearValue = ()->
+      this.setValue('')
+      this.uploaderContainer.show()
 
-  upload = (context, file, success, error)->
-    uid  = [(new Date()).getTime(), 'raw'].join('-')
-    data = new FormData()
+    this.init = ()->
+      this.obj.after(this.previewContainer).after(this.uploaderContainer)
 
-    data.append('attachment[name]', file.name)
-    data.append('attachment[file]', file)
-    data.append('attachment[uid]', uid)
+      this.uploader.change(((ev)->
+        file = ev.currentTarget.files[0]
 
-    callbackSuccess = (data)->
-      console.log('Upload callback called')
+        urlAPI = if (typeof URL != "undefined") then URL else (if (typeof webkitURL != "undefined") then webkitURL else null)
 
-      if typeof(success) == 'function'
-        success.apply(context, arguments);
+        # Handle one upload at a time
+        if /image/.test(file.type)
+          this.setValue(urlAPI.createObjectURL(file));
 
-    callbackError = (jqXHR, status, errorThrown)->
-      console.log('Upload callback error called')
+          this.doUpload(this, file, ((data)->
+            this.setValue(data.file.url)
+          ).bind(this))
 
-      if typeof(error) == 'function'
-        error.call(context, status)
+      ).bind(this))
 
-    xhr = $.ajax({
-      url: config.uploadUrl
-      data: data
-      cache: false
-      contentType: false
-      processData: false
-      dataType: 'json'
-      type: 'POST'
-    })
+      this.setValue(this.obj.val())
 
-    xhr.done(callbackSuccess).fail(callbackError)
+      this.removeButton.click(((ev)->
+        this.clearValue()
+        ev.preventDefault()
+        false
+      ).bind(this))
 
-  config = {
-    uploadUrl: '/admin/attachments'
-  }
+    this.init()
 
   TabGroupOption = (selector)->
     if typeof selector == 'string'
@@ -106,12 +122,6 @@ $(document).ready(()->
         $me.next().find('input').attr('disabled', 'disabled')
       ).bind(this))
 
-    # # TODO: find better name
-    # this.clearTabContentStates = ()->
-    #   tab.toggleClass('is-active', isActive)
-
-
-
     this.obj.change(((ev)->
       el = ev.target
       if el.checked
@@ -124,6 +134,7 @@ $(document).ready(()->
 
     this.obj
 
-  g = new TabGroupOption('.tab-group--option')
-  console.log g
+
+  new Uploader('.swatch-field--text_field')
+  new TabGroupOption('.tab-group--option')
 )

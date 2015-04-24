@@ -39,3 +39,37 @@ input:checked + .tab-group--content {
   display: block;
 }
 
+.preview-container {
+  position: relative;
+  display: inline-block;
+}
+.preview-container img {
+  max-width: 24px;
+}
+.preview-container.is-empty {
+  display: none;
+}
+.preview--remove {
+  opacity: 0;
+}
+.preview-container:hover .preview--remove {
+  opacity: 1;
+}
+
+.swatch-field--text_field {
+  display: none;
+}
+
+
+.file-uploader--container {
+  cursor: pointer;
+  padding: 0.4em 0.6em;
+  background: #6F6FE7;
+  display: inline-block;
+  border-radius: 3px;
+  color: #FFF;
+}
+
+.file-uploader input[type="file"] {
+  display: none;
+}

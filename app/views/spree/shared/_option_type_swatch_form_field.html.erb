@@ -22,7 +22,7 @@
     %>
     <%= radio_button_tag "swatch-#{f.object.id}-type", swatch_type, checked, id: "swatch-#{f.object.id}-#{swatch_type}", class: 'tab-group--option', "data-fields" => ".js-swatch-field-#{f.object.id}" %>
     <div class="tab-group--content">
-      <%= f.send(swatch_type.to_sym, :swatch, value: checked ? value : '', class: "swatch-picker swatch-field js-swatch-field-#{f.object.id}", id: "swatch-field-#{f.object.id}-#{swatch_type}") %>
+      <%= f.send(swatch_type.to_sym, :swatch, value: checked ? value : '', class: "swatch-field--#{swatch_type} swatch-field js-swatch-field-#{f.object.id}", id: "swatch-field-#{f.object.id}-#{swatch_type}") %>
     </div>
   <% end %>
 </td>
