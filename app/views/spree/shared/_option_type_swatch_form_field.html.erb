@@ -1,22 +1,28 @@
 <td class="swatch-field">
   <% value = f.object.swatch %>
-  <% Hash['none', 'None', 'color', 'Color', 'file', 'URL'].each do |swatch_type, swatch_presentation| %>
+  <% swatch_input_types = Hash['hidden_field', 'None', 'color_field', 'Color', 'text_field', 'Image'] %>
+
+  <div class="tab-group--tab-container">
+    <% swatch_input_types.each do |swatch_type, swatch_presentation| %>
+      <label for="<%= "swatch-#{f.object.id}-#{swatch_type}" %>" class="tab-group--tab"><%= swatch_presentation %></label>
+    <% end %>
+  </div>
+
+  <% swatch_input_types.each do |swatch_type, swatch_presentation| %>
     <% checked = case swatch_type
-      when 'none'
+      when 'hidden_field'
         (value.nil? || value.blank?)
-      when 'color'
+      when 'color_field'
         /\A#([0-9a-f]{3}|[0-9a-f]{6})\z/i.match(value)
-      when 'file'
+      when 'text_field'
         /\Ahttp(s)?:\/\/.+\z/i.match(value)
       else
         false
       end
     %>
-    <%= radio_button_tag "swatch-#{f.object.id}-type", swatch_type, checked, id: "swatch-#{f.object.id}-#{swatch_type}", class: 'enable-swatch-toggle', "data-fields" => ".js-swatch-field-#{f.object.id}" %>
-    <label for="<%= "swatch-#{f.object.id}-#{swatch_type}" %>"><%= swatch_presentation %></label>
+    <%= radio_button_tag "swatch-#{f.object.id}-type", swatch_type, checked, id: "swatch-#{f.object.id}-#{swatch_type}", class: 'tab-group--option', "data-fields" => ".js-swatch-field-#{f.object.id}" %>
+    <div class="tab-group--content">
+      <%= f.send(swatch_type.to_sym, :swatch, value: checked ? value : '', class: "swatch-picker swatch-field js-swatch-field-#{f.object.id}", id: "swatch-field-#{f.object.id}-#{swatch_type}") %>
+    </div>
   <% end %>
-  <br>
-  <%= f.hidden_field :swatch, value: nil %>
-  <%= f.color_field :swatch, class: "swatch-picker swatch-field js-swatch-field-#{f.object.id}" %>
-  <%= f.text_field :swatch, class: "swatch-field--url swatch-field js-swatch-field-#{f.object.id}" %>
 </td>
