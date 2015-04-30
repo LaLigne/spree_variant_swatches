@@ -1,5 +1,3 @@
-# require 'rails_helper'
-
 RSpec.describe Spree::OptionValue, type: :model do
   describe "swatch" do
     it "can be nil or blank" do
@@ -74,6 +72,26 @@ RSpec.describe Spree::OptionValue, type: :model do
       invalid_urls.each do |color|
         option_value.swatch = color
         expect(option_value.valid?).to eql(false)
+      end
+    end
+
+    describe "has_swatch?" do
+      it "is falsey if no swatch value" do
+        option_value = build(:option_value)
+        option_value.swatch = nil
+        expect(option_value.has_swatch?).to be_falsey
+      end
+
+      it "is falsey if swatch value is blank" do
+        option_value = build(:option_value)
+        option_value.swatch = ''
+        expect(option_value.has_swatch?).to be_falsey
+      end
+
+      it "is truthy if swatch value is non blank" do
+        option_value = build(:option_value)
+        option_value.swatch = '#000000'
+        expect(option_value.has_swatch?).to be_truthy
       end
     end
   end

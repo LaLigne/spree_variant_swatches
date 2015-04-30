@@ -33,6 +33,10 @@ require 'spree/testing_support/url_helpers'
 # Requires factories defined in lib/spree_variant_swatches/factories.rb
 require 'spree_variant_swatches/factories'
 
+Dir["#{File.dirname(__FILE__)}/factories/**/*.rb"].each do |f|
+  require File.expand_path(f)
+end
+
 RSpec.configure do |config|
   config.include FactoryGirl::Syntax::Methods
 
