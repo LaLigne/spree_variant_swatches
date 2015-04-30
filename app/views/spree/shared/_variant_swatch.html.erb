@@ -1,10 +1,3 @@
 <div class="swatch-container">
-  <% product.option_types.each do |option_type| %>
-    <% option_variant_hash = product.categorise_variants_from_option(option_type) %>
-    <% option_variant_hash.each do |option_value, variants| %>
-      <% if option_value.swatch && !option_value.swatch.blank? %>
-        <%= link_to option_value.presentation, product_path(product, option_value: option_value.id), style: swatch_style(option_value), class: "swatch", title: option_value.presentation, "data-image-url" => variants.find{ |v| v.images.any? }.try(:images).try(:first).try(:attachment).try(:url, :small), "data-option-value" => option_value.id %>
-      <% end %>
-    <% end %>
-  <% end %>
+  <%= swatches_for(product) %>
 </div>
