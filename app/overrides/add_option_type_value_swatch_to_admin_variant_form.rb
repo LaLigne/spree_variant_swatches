@@ -1,7 +1,7 @@
 Deface::Override.new(
   virtual_path: "spree/admin/option_types/edit",
   insert_before: "[data-hook='option_header'] .actions",
-  text: "<th>Swatch<th>",
+  text: "<th>Swatch</th>",
   name: "add_option_type_value_swatch_header_to_admin_variant_form",
   original: ""
 )
