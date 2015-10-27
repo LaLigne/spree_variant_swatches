@@ -55,3 +55,28 @@ input:checked + .tab-group--content {
 .preview-container:hover .preview--remove {
   opacity: 1;
 }
+
+.swatch-field--text_field {
+  display: none;
+}
+
+.file-uploader--container {
+  cursor: pointer;
+  padding: 0.4em 0.6em;
+  background: #5498da;
+  display: inline-block;
+  border-radius: 3px;
+  color: #fff;
+  &:hover {
+    background: #9fc820;
+    color: #fff;
+  }
+}
+
+.file-uploader input[type="file"] {
+  display: none;
+}
+
+.option-value-thumbnail--field .preview-container img {
+  max-width: none;
+}
