@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_variant_swatches'
-  s.version     = '2.4.5'
+  s.version     = '2.4.6'
   s.summary     = 'Add color or image swatches to Spree variant options.'
   s.required_ruby_version = '>= 1.9.3'
 
@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'solidus_core', '~> 1.0.2'
+  s.add_dependency 'solidus_core', [">= 1.0.0", "< 3.0.0"]
 
   s.add_development_dependency 'capybara', '~> 2.4'
   s.add_development_dependency 'coffee-rails'
